@@ -76,3 +76,51 @@ func GetBook(w http.ResponseWriter, r *http.Request) {
 	}
 	helpers.Response(w, 200, "List Books", books)
 }
+
+func ReturnBook(w http.ResponseWriter, r *http.Request) {
+	idBorrow := mux.Vars(r)["id"]
+	id, _ := strconv.Atoi(idBorrow)
+
+	var borrow models.Borrow
+
+	if err := config.DB.First(&borrow, id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			helpers.Response(w, 404, "Book Not Found", nil)
+			return
+		}
+		helpers.Response(w, 500, err.Error(), nil)
+		return
+	}
+	var book models.Book
+
+	if err := config.DB.First(&book, borrow.BookID).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			helpers.Response(w, 404, "Book Not Found", nil)
+			return
+		}
+		helpers.Response(w, 500, err.Error(), nil)
+		return
+	}
+
+	book.Stock += 1
+
+	if err := config.DB.Save(&book).Error; err != nil {
+		helpers.Response(w, 500, err.Error(), nil)
+		return
+	}
+
+	res := config.DB.Delete(&borrow, id)
+
+	if res.Error != nil {
+		helpers.Response(w, 500, res.Error.Error(), nil)
+		return
+	}
+
+	if res.RowsAffected == 0 {
+		helpers.Response(w, 404, "Not Found Book", nil)
+		return
+	}
+
+	helpers.Response(w, 200, "Success Return Book", nil)
+
+}
