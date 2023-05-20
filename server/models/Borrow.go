@@ -15,7 +15,7 @@ type Borrow struct {
 type BorrowResponse struct {
 	ID        uint      `gorm:"primaryKey" json:"id"`
 	UserID    uint      `json:"-"`
-	User      User      `gorm:"foreignKey:UserID" json:"user"`
+	User      User      `json:"-"`
 	BookID    uint      `json:"-"`
 	Book      Book      `gorm:"foerignKey:BookID" json:"book"`
 	CreatedAt time.Time `json:"created_at"`

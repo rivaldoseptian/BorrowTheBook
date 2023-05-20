@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"server/config"
 	"server/helpers"
@@ -123,4 +124,22 @@ func ReturnBook(w http.ResponseWriter, r *http.Request) {
 
 	helpers.Response(w, 200, "Success Return Book", nil)
 
+}
+
+func ListBorrow(w http.ResponseWriter, r *http.Request) {
+	user, ok := r.Context().Value("userinfo").(*helpers.MyCustomClaims)
+	fmt.Println(user)
+	if !ok {
+		helpers.Response(w, 400, "Invalid user information", nil)
+		return
+	}
+
+	var borrow []models.Borrow
+	var responseBorrow []models.BorrowResponse
+	if err := config.DB.Where("user_id = ?", user.ID).Preload("Book").Find(&borrow).Find(&responseBorrow).Error; err != nil {
+		http.Error(w, "Borrow not found", http.StatusNotFound)
+		return
+	}
+
+	helpers.Response(w, 200, "List Books", responseBorrow)
 }
