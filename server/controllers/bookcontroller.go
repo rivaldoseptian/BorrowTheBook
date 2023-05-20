@@ -27,11 +27,6 @@ func BorrowBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if user.Ispenalty {
-		helpers.Response(w, 400, "You are still in penalty", nil)
-		return
-	}
-
 	var borrow models.Borrow
 
 	borrow.UserID = user.ID

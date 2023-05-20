@@ -19,7 +19,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
 	if register.Password != register.PasswordConfirm {
-		helpers.Response(w, 400, "Pssword Not Match", nil)
+		helpers.Response(w, 400, "Password Not Match", nil)
 		return
 	}
 
@@ -31,10 +31,47 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user := models.User{
-		Name:      register.Name,
-		Email:     register.Email,
-		Password:  passswordHash,
-		Ispenalty: false,
+		Name:     register.Name,
+		Email:    register.Email,
+		Password: passswordHash,
+		Role:     "Student",
+	}
+
+	if err := config.DB.Create(&user).Error; err != nil {
+		helpers.Response(w, 500, err.Error(), nil)
+		return
+	}
+
+	helpers.Response(w, 201, "Register Succesfully", nil)
+}
+
+func RegisterAdmin(w http.ResponseWriter, r *http.Request) {
+	var register models.Register
+
+	if err := json.NewDecoder(r.Body).Decode(&register); err != nil {
+		helpers.Response(w, 500, err.Error(), nil)
+		return
+	}
+
+	defer r.Body.Close()
+
+	if register.Password != register.PasswordConfirm {
+		helpers.Response(w, 400, "Password Not Match", nil)
+		return
+	}
+
+	passswordHash, err := helpers.HashPassword(register.Password)
+
+	if err != nil {
+		helpers.Response(w, 500, err.Error(), nil)
+		return
+	}
+
+	user := models.User{
+		Name:     register.Name,
+		Email:    register.Email,
+		Password: passswordHash,
+		Role:     "Admin",
 	}
 
 	if err := config.DB.Create(&user).Error; err != nil {

@@ -11,10 +11,10 @@ import (
 var mySigningKey = []byte("Rivaldoseptian")
 
 type MyCustomClaims struct {
-	ID        uint   `json:"id"`
-	Name      string `json:"name"`
-	Email     string `json:"email"`
-	Ispenalty bool   `json:"is_penalty"`
+	ID    uint   `json:"id"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
+	Role  string `json:"role"`
 	jwt.RegisteredClaims
 }
 
@@ -23,7 +23,7 @@ func CreateToken(user *models.User) (string, error) {
 		user.ID,
 		user.Name,
 		user.Email,
-		user.Ispenalty,
+		user.Role,
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),

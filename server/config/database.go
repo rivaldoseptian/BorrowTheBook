@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"server/models"
 
-	// "server/seeders"
 	"log"
+	// "server/seeders"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
