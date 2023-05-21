@@ -7,4 +7,5 @@ func IndexRouter(r *mux.Router) {
 	AuthRoutes(api)
 	BorrowRoutes(api)
 	BookRoutes(api)
+	AdminRoutes(api)
 }
